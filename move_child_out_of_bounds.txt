@@ -1,0 +1,60 @@
+// Herzstein Dev
+
+//The Script moves a child object to a position relative to the parent object (across sim Bounds).
+//When an avatar stands up, the script stops the movement, when the avatar sits down, it resumes the movement
+
+
+//chose the next variables yourself
+
+string textAboveObject="Click me to start the ride";
+string childObjectToMove="SitBall";
+list KFMlist=[<0,0,0>,ZERO_ROTATION,5,<0,0,18>,ZERO_ROTATION,5,<4,-2,0>,ZERO_ROTATION,10,<0,0,0>,ZERO_ROTATION,15,<-4,2,0>,ZERO_ROTATION,5,<0,0,-18>,ZERO_ROTATION,5]; 
+
+//internal variables
+
+
+
+
+default
+{   state_entry()
+    {   
+        llSetText(textAboveObject, <1.0, 1.0, 1.0>,1.0);
+  
+    }
+    touch_start(integer total_number)
+    {   
+	
+	
+		//llSetTimerEvent(5.0);   
+		
+		llSetKeyframedMotion( KFMlist, [KFM_MODE, KFM_FORWARD]);
+    }
+    
+    timer()
+    {
+       
+    }
+	
+	changed( integer change){ 
+		if(change & CHANGED_LINK)
+        {
+            integer links = 0;
+            if(llGetObjectPrimCount(llGetKey()) < (links = llGetNumberOfPrims()))
+            {
+                //someone sat down
+				
+				llSetKeyframedMotion([],[KFM_COMMAND, KFM_CMD_PLAY]);
+				//continue keyframe motion
+            }
+            else {
+				//someone stood up
+				
+				llSetKeyframedMotion([],[KFM_COMMAND, KFM_CMD_PAUSE]);
+				//stop the keyframe motion
+			}
+        }
+	
+	}
+	
+	
+}

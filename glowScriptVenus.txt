@@ -1,0 +1,43 @@
+integer GLOW_CHANNEL=-100;
+string commonPart;
+
+float glowValue=0.1;
+//glow value when turned on between 0 and 1
+
+//add this script to your green buttons (one script per green button)
+
+default
+{
+    state_entry()
+    {
+        llListen(GLOW_CHANNEL,"",NULL_KEY,"");
+        string objName=llGetObjectName();
+        list parts=llParseString2List(objName,[":"],[""]);
+        commonPart=llList2String(parts,0);
+    }
+    
+    listen(integer channel, string name, key id, string message)
+    {
+        if (llGetOwnerKey(id) != llGetOwner())
+        {
+            
+            return;
+        }
+         
+        if(llToLower(message)==llToLower(commonPart+":on")){
+            //sets the texture color to green with no transparency
+            llSetPrimitiveParams([PRIM_COLOR, ALL_SIDES,<0.000, 0.914, 0.143>,1]);
+
+            //alternatively turn the glow on 
+            //llSetPrimitiveParams([PRIM_GLOW, ALL_SIDES,glowValue]);
+        } 
+        if(llToLower(message)==llToLower(commonPart+":off")){
+            //this sets the color of the texture to white and no transparency
+            llSetPrimitiveParams([PRIM_COLOR, ALL_SIDES,<1.0, 1.0, 1.0>,1]);
+            
+            
+            //alternatively turn the glow off
+            //llSetPrimitiveParams([PRIM_GLOW, ALL_SIDES,0]);
+        } 
+    }
+}

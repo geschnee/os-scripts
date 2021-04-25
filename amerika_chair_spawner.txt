@@ -1,0 +1,55 @@
+// Herzstein Dev
+
+//The Script spawns a new object after it registers a message after a few seconds.
+
+
+//chose the next variables yourself:
+string object_to_spawn="amerikachair03";
+
+//spawn position
+vector spawn_pos=<0,0,0>;
+//replace this vector with data from Object/Position (meters)
+
+//spawn rotation
+vector spawn_rot=<45,30,0>;
+//replace this vector with data from Object/Rotation (degrees)
+
+
+float delay_after_message=7;
+//delay should consider the time it takes for the chair to move out of frame
+
+integer CHANNEL_ID=8;
+string register_text="keyframed motion starting";
+//listens for the message register_text on channel CHANNEL_ID by the object object_to_spawn
+
+
+//internal variables:
+integer spawn=0;
+rotation spawn_rot_internal;
+
+default
+{   
+	state_entry()
+    {
+		spawn_rot_internal=llEuler2Rot(spawn_rot*DEG_TO_RAD); 
+        llListen(CHANNEL_ID,object_to_spawn,NULL_KEY,"");
+        spawn=1;
+		llSetTimerEvent(0.2);
+    }
+    
+    timer()
+    {
+		if(spawn==1){
+			llRezObject(object_to_spawn, spawn_pos, <0,0,0>, spawn_rot_internal, 0);
+		}
+		spawn=0;
+    }
+	
+	listen(integer channel, string name, key id, string message)
+    {    
+        if(llToLower(message)==llToLower(register_text)){
+			spawn=1;
+            llSetTimerEvent(delay_after_message);
+        }
+    }
+}

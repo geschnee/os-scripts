@@ -1,0 +1,50 @@
+
+
+http://wiki.secondlife.com/wiki/LlSetKeyframedMotion
+
+llSetKeyframedMotion geht ueber Simgrenzen hinweg
+
+
+wie geht eine KeyFrame route mit Unterbrechung, wenn der darauf sitzende absteigt?
+Weiterfahren, wenn er (oder jemand) wieder aufsteigt 
+
+
+
+KeyFrame Pause-Play:
+//unter der Bedinugn, dass eine KeyFrame bereits lauft
+
+llSetKeyframedMotion([],[KFM_COMMAND, KFM_CMD_PAUSE]);
+//modify prim positions here
+llSetKeyframedMotion([],[KFM_COMMAND, KFM_CMD_PLAY]);
+
+
+
+Unsit:
+
+http://wiki.secondlife.com/wiki/LlUnSit
+
+
+http://wiki.secondlife.com/wiki/Moving_end
+
+
+Print KFMlist:
+
+		integer r = 0;
+		end = llGetListLength(KFMlistShortTime);
+		llSay(0, "End="+end);
+        for (; r<end; r=r+3)
+        {
+			llSay(0, "r="+r);
+			
+			llSay(0, "KFMList");
+			vector bar1=llList2Vector(KFMlist, r);
+			llSay(0, (string) bar1.x);
+			llSay(0, (string) bar1.y);
+			llSay(0, (string) bar1.z);
+			
+			llSay(0, "shorttime");
+			vector bar=llList2Vector(KFMlistShortTime, r);
+			llSay(0, (string) bar.x);
+			llSay(0, (string) bar.y);
+			llSay(0, (string) bar.z);
+		}

@@ -1,0 +1,58 @@
+// Herzstein Dev
+
+//Users can click the object, when a user clicks he gets a message directing him to join the object's group
+//if the user joins the group he will get the objects in the list "itemsToGive"
+
+//the items will be arranged in a folder called "folderName"
+
+//the script is not ideal when multiple users want to get items from the script at the same time
+//however they can just click again after joining the group to receive the items guaranteed
+
+
+//chose the next variables yourself
+
+string textAboveObject="group join rezmagazine.com";
+string folderName="rezmagasineFolder";//name of given folder
+list itemsToGive=["freezerMainWithRobo","HandleRotDoor"];
+//list of items in the object's content that you want to give, specify them by name
+
+
+//internal variables
+key lastClicked;
+integer alreadyGiven;
+string groupID;
+default
+{   state_entry()
+    {   
+        llSetText(textAboveObject, <1.0, 1.0, 1.0>,1.0);
+        list paramList=llGetObjectDetails(llGetKey(),[OBJECT_GROUP]);
+        groupID=llList2String(paramList,0);
+    }
+    touch_start(integer total_number)
+    {   
+        key id = llDetectedKey(0);
+        if(llSameGroup(id)){
+            llGiveInventoryList(llDetectedKey(0), folderName, itemsToGive);    
+        } else {
+            llInstantMessage(llDetectedKey(0), "\nJoin the group! Please click the link in your history window (ctrl-H)"+"\n secondlife:///app/group/"+groupID+"/about");
+            if(llSameGroup(id)){
+     
+                llGiveInventoryList(llDetectedKey(0), folderName, itemsToGive);    
+            } else {
+                lastClicked=llDetectedKey(0);
+                alreadyGiven=0;
+                llSetTimerEvent(5.0);
+            }   
+        }
+    }
+    
+    timer()
+    {
+        if(alreadyGiven==0){
+            if(llSameGroup(lastClicked)){
+                llGiveInventoryList(lastClicked, folderName, itemsToGive);
+                alreadyGiven=1;
+            }
+        }
+    }
+}

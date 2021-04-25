@@ -1,0 +1,52 @@
+// BETLOG Hax
+//
+// AEST: 20080613 0704 [SLT:  20080612 1404]
+// For  Harleywood Guru request in SecondLife Hobos group chat
+//
+// Thanks to Punkaroo Snoring, and Pavig Lok for inadvertently pointing out something
+// i read in a RC release notes and totally didnt pay attention to. But which is really useful.
+//=========================================================================
+// ---LICENCE START---
+// http://creativecommons.org/licenses/by-sa/3.0/
+// ie: Attribution licence:
+//   Give me credit by leaving it in the script I created.
+//   Supply my original script with your modified version.
+//   Refer to the wiki URL from which you copied this script.
+//      https://wiki.secondlife.com/wiki/Group_invitation
+// ---LICENCE END---
+//=========================================================================
+// SHARED CONFIGURATION
+//----------------------------------
+// CONFIGURATION
+//----------------------------------
+// CORE CODE
+//=========================================================================
+default
+{   state_entry()
+    {   llSetText("group join rezmagazine.com", <1.0, 1.0, 1.0>,1.0);
+    }
+    touch_start(integer total_number)
+    {   
+        key id = llDetectedKey(0);
+        if(llSameGroup(id)){
+     
+            llGiveInventoryList(llDetectedKey(0), "rezMagazineItems", ["freezerMainWithRobo","HandleRotDoor"] );    
+        } else {
+            list data = llGetObjectDetails(llGetKey(), ([OBJECT_GROUP]));
+            string UUID = llList2String(data, 0);
+//       llSetColor(<1.0, 0.0, 0.0>, ALL_SIDES);         //IM adds a delay.. indicate this visually
+//        llLoadURL(        //does NOT seem to work, but i'd love to know if it does (like if it gets fixed in a client release)
+            llInstantMessage(llDetectedKey(0)
+//            , "Join the group! Please click the dialog box."           //as above 
+            , "\nJoin the group! Please click the link in your history window (ctrl-H)"
+                +"\n secondlife:///app/group/9c871669-c021-4685-a038-ddc7113b4837/about"
+        );
+            if(llSameGroup(id)){
+     
+                llGiveInventoryList(llDetectedKey(0), "rezMagazineItems2", ["freezerMainWithRobo","HandleRotDoor"]);    
+            }
+        }
+//       llSetColor(<0.0, 1.0, 0.0>, ALL_SIDES);        //IM adds a delay.. indicate this visually
+    }
+}
+//=========================================================================
