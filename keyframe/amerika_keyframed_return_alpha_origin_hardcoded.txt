@@ -1,30 +1,28 @@
 // Herzstein Dev
 
 //The Script moves an object to a position with a keyframe (possibly across sim Bounds), when an avatar sits on it.
-//When the avatar stands up, the object disappears slowly and is then deleted.
 //The avatar will be informed to stand up after the movement, if the avatar doesn't stand up after a few seconds, he is ejected.
-//The object then returns to its origin position with the KeyframedMotion, it then also sets the position to the starting position to correct inaccuracies.
+//The object then becomes transparent and returns to its origin position with the KeyframedMotion.
+//It then also sets the position to originalPosition to correct inaccuracies from the reverse Keyframe.
 
 
 //chose the next variables yourself:
 
-string textAboveObject="Travel to Zack Herrmann's Afterlife";
-list KFMlist=[<0,0,0>,ZERO_ROTATION,2, //zero movement, zero rotation, 10 seconds duration (waiting)
-<0,0,5>,ZERO_ROTATION,5, //5 meters up, zero rotation, 5 seconds duration
-<0,0,1700>,ZERO_ROTATION,5, //20 meters up, zero rotation, 5 seconds duration
-<175,0,0>,ZERO_ROTATION,20, //10 meters x, zero rotation, 5 seconds duration
-<20,20,0>,ZERO_ROTATION,3]; //10 meters x, zero rotation, 10 seconds duration
+string textAboveObject="Hard coded chair to Zack's Afterlife";
+list KFMlist=[<0,0,0>,ZERO_ROTATION,6, //zero movement, zero rotation, 3 seconds duration (waiting)
+<0,0,10>,ZERO_ROTATION,5, //5 meters up, zero rotation, 5 seconds duration
+<0,0,1973>,ZERO_ROTATION,5, //20 meters up, zero rotation, 5 seconds duration
+<0,249,0>,ZERO_ROTATION,5, //10 meters x, zero rotation, 5 seconds duration
+<-167,0,0>,ZERO_ROTATION,10]; //10 meters x, zero rotation, 10 seconds duration
 
 float waitTime=3.0;
 //time waiting after KFMlist is processed before ejecting the avatar
 
 //hardcode the resting position of the object, replace x,y and z
-vector originalPosition=<228,57,32>;
+vector originalPosition=<207.17438,202,25.34253>;
 
-integer CHANNEL_ID=8;
-//channel for other objects to register the start of movement
 
-string lift_up="Lift up to Zack Red tester";
+string lift_up="Lift up to Zack Herrmann's Afterlife";
 
 
 
@@ -39,7 +37,6 @@ integer mode=1;
 
 integer isMoving=0;
 //0 currently not moving, 1 currently moving
-//isMoving kann wahrscheinlich entfernt werden
 
 integer isSitting=0;
 //0 no one is sitting, 1 someone is sitting
@@ -50,20 +47,13 @@ list KFMwait;
 
 
 remove_chair() {
-    //put your particle effects here
-
-
-    // delete object attached to script
-    isDisappearing=1; //start the disappearing process
+	//start the disappearing process
+    isDisappearing=1; 
     llSetTimerEvent(0.1);
 }
 
 start_journey() {
     llSay(0, lift_up);
-
-
-    llSay(CHANNEL_ID, "keyframed motion starting");
-    //another script will use this to spawn new chairs
     
     //put your particle effects here
     
@@ -84,15 +74,15 @@ default
     {   
         llSetText(textAboveObject, <1.0, 1.0, 1.0>,1.0);
         
+		//shorten the duration for the reverse movement
         KFMlistShortTime=KFMlist;
-        list shortenedDuration=[0.2];
-        integer i = 2;
+        list shortenedDuration=[1.0]; // attention dont go less if long distance
+		integer i = 2;
         integer end = llGetListLength(KFMlistShortTime);
         for (; i<end; i=i+3)
         {
             KFMlistShortTime=llListReplaceList(KFMlistShortTime, shortenedDuration, i, i);
         }
-        
         
         KFMwait=[<0,0,0>,ZERO_ROTATION,waitTime];
     }
@@ -110,9 +100,7 @@ default
                 llSetTimerEvent(0.1);
             }
             llSetLinkAlpha(LINK_SET, alpha, ALL_SIDES);
-            
         }
-            
     }
     
     changed( integer change){
@@ -127,20 +115,17 @@ default
                 isSitting=1;
                 
                 if(isMoving==0 && mode==1){
-                //not moving yet
+					//not moving yet
                     isMoving=1;
                     start_journey();
                 }
                 
-                //remove textAboveObject
             }
             else {
                 //someone stood up
                 isSitting=0;
                 
                 remove_chair();
-                
-                //add textAboveObject
             }
         }
     }
@@ -153,17 +138,18 @@ default
             forward_movement_finished();
             
             if(isSitting==1){
+				//someone is sitting, so start waiting
                 mode=0;
                 llSetKeyframedMotion( KFMwait, [KFM_MODE, KFM_FORWARD]);
                 isMoving=1;
             } else {
-                //skip waiting/KFMwait
+                //skip waiting/KFMwait and directly go back since noone is sitting
                 mode=-1;
                 llSetKeyframedMotion( KFMlistShortTime, [KFM_MODE, KFM_REVERSE]);
                 isMoving=1;
             }
         } else if (mode==0) {
-            //finished waiting
+            //finished waiting, move back
             eject_passenger();
             llSetKeyframedMotion(KFMlistShortTime, [KFM_MODE, KFM_REVERSE]);
             isMoving=1;
@@ -171,16 +157,17 @@ default
             
         } else if(mode==-1) {
             //finished return movement
+			
+			//correct any small divergence from originalPosition
+			do
+				llSetPos(originalPosition);
+			while (llGetPos() != originalPosition);
+			
             alpha=1;
             llSetLinkAlpha(LINK_SET, alpha, ALL_SIDES);
             mode=1;
             isMoving=0;
             isDisappearing=0;
-			
-			do
-				llSetPos(originalPosition);
-			while (llGetPos() != originalPosition);
-			
 			
 			//set alpha of root prim to be transparent
 			llSetLinkAlpha(LINK_ROOT, 0.0, ALL_SIDES);
