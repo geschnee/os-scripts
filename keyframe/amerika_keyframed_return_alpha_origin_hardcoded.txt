@@ -10,10 +10,10 @@
 
 string textAboveObject="Hard coded chair to Zack's Afterlife";
 list KFMlist=[<0,0,0>,ZERO_ROTATION,6, //zero movement, zero rotation, 3 seconds duration (waiting)
-<0,0,10>,ZERO_ROTATION,5, //5 meters up, zero rotation, 5 seconds duration
-<0,0,1973>,ZERO_ROTATION,5, //20 meters up, zero rotation, 5 seconds duration
-<0,249,0>,ZERO_ROTATION,5, //10 meters x, zero rotation, 5 seconds duration
-<-167,0,0>,ZERO_ROTATION,10]; //10 meters x, zero rotation, 10 seconds duration
+<0,0,10>,ZERO_ROTATION,5, //10 meters up, zero rotation, 5 seconds duration
+<0,0,1973>,ZERO_ROTATION,5, //1973 meters up, zero rotation, 5 seconds duration
+<0,249,0>,ZERO_ROTATION,5, //249 meters y, zero rotation, 5 seconds duration
+<-167,0,0>,ZERO_ROTATION,10]; //-167 meters x, zero rotation, 10 seconds duration
 
 float waitTime=3.0;
 //time waiting after KFMlist is processed before ejecting the avatar
