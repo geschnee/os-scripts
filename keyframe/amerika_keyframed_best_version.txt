@@ -165,13 +165,13 @@ default
             isMoving=0;
             isDisappearing=0;
 			
-			//correct any small divergence from originalPosition
-			do
-				llSetPos(originalPosition);
-			while (llGetPos() != originalPosition);
+            //correct any small divergence from originalPosition
+            do
+                llSetPos(originalPosition);
+            while (llGetPos() != originalPosition);
 			
-			//set alpha of root prim to be transparent
-			llSetLinkAlpha(LINK_ROOT, 0.0, ALL_SIDES);
+            //set alpha of root prim to be transparent
+            llSetLinkAlpha(LINK_ROOT, 0.0, ALL_SIDES);
         }
     }
 }
